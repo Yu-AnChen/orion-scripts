@@ -1,5 +1,7 @@
 # Using the nucleiDAPILAMIN model instead of the nucleiDAPI model
 
+import sys
+sys.path.append(r'C:\Users\Public\Downloads\UnMicst')
 
 import UnMicst2 as UnMicst2
 import pathlib
@@ -181,18 +183,18 @@ model_path = pathlib.Path('./models/nucleiDAPILAMIN/')
 UnMicst2.UNet2D.singleImageInferenceSetup(model_path, 0, -1, -1)
 
 import csv
-with open(r'Z:\RareCyte-S3\YC-analysis\P37_CRCstudy_Round1\scripts-processing\file_list.csv') as file_config_csv:
+with open(r'C:\Users\Public\Downloads\orion-scripts\file_list.csv') as file_config_csv:
     csv_reader = csv.DictReader(file_config_csv)
     file_config = [dict(row) for row in csv_reader]
 
-input_dir = pathlib.Path(r'Z:\RareCyte-S3\P37_CRCstudy_Round1')
+input_dir = pathlib.Path(r'C:\rcpnl\tissue')
 
 for c in file_config[:]:
     print('Processing', c['name'])
     test(
         img_path=str(input_dir / c['path']),
         channel=0,
-        out_dir=r'Z:\RareCyte-S3\YC-analysis\P37_CRCstudy_Round1', 
+        out_dir=r'C:\rcpnl\mcmicro', 
         out_name=c['name'],
         pixel_scale=0.325/0.65,
         subtract_bg=False,

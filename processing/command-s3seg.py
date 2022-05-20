@@ -3,29 +3,22 @@ import time
 import datetime
 
 command = '''
-python  c:/Users/Public/Downloads/S3segmenter/S3segmenter.py 
-    --imagePath "{}" 
-    --contoursClassProbPath "{}" 
-    --nucleiClassProbPath "{}" 
-    --probMapChan 0
-    --crop dearray 
-    --nucleiFilter {}
-    --logSigma 5 60
-    --segmentCytoplasm ignoreCytoplasm
-    --cytoMethod ring 
-    --cytoDilation 5 
-    --outputPath {}
+python c:/Users/Public/Downloads/S3segmenter/large/S3segmenter.py
+    --imagePath "{}"
+    --stackProbPath "{}"
+    --outputPath "{}"
+    --area-max 50000 --expand-size 5 --maxima-footprint-size 7 --mean-intensity-min 128
 '''
 
 import pathlib
 import csv
 
-with open(r'Z:\RareCyte-S3\YC-analysis\P37_CRCstudy_Round1\scripts-processing\file_list.csv') as file_config_csv:
+with open(r'C:\Users\Public\Downloads\orion-scripts\file_list.csv') as file_config_csv:
     csv_reader = csv.DictReader(file_config_csv)
     file_config = [dict(row) for row in csv_reader]
 
-group_dir = pathlib.Path(r'Z:\RareCyte-S3\YC-analysis\P37_CRCstudy_Round1')
-ome_dir = pathlib.Path(r'Z:\RareCyte-S3\P37_CRCstudy_Round1')
+group_dir = pathlib.Path(r'C:\rcpnl\mcmicro')
+ome_dir = pathlib.Path(r'C:\rcpnl\tissue')
 
 for c in file_config[:]:
     o = ome_dir / c['path']
@@ -37,8 +30,6 @@ for c in file_config[:]:
     command_final = command.format(
         str(o),
         prob_path,
-        prob_path,
-        'IntPM',
         out_path
     )
     start_time = int(time.perf_counter())
