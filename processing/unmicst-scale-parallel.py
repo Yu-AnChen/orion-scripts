@@ -179,7 +179,7 @@ import pathlib
 # ome_tiffs = sorted(ome_tiffs.glob('*.ome.tif'))
 # ome_tiffs = [pathlib.Path(r'Z:\RareCyte-S3\YC-analysis\Lung_066-082\test.tif')]
 
-model_path = pathlib.Path('./models/nucleiDAPILAMIN/')
+model_path = pathlib.Path(r'C:\Users\Public\Downloads\UnMicst\models\nucleiDAPILAMIN')
 UnMicst2.UNet2D.singleImageInferenceSetup(model_path, 0, -1, -1)
 
 import csv
