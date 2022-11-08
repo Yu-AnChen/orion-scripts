@@ -7,7 +7,8 @@ python c:/Users/Public/Downloads/S3segmenter/large/S3segmenter.py
     --imagePath "{}"
     --stackProbPath "{}"
     --outputPath "{}"
-    --area-max 50000 --expand-size 5 --maxima-footprint-size 7 --mean-intensity-min 128
+    --probMapChan {}
+    --area-max 50000 --expand-size 5 --maxima-footprint-size 7 --mean-intensity-min 128 --pixelSize0.325
 '''
 
 import pathlib
@@ -30,7 +31,9 @@ for c in file_config[:]:
     command_final = command.format(
         str(o),
         prob_path,
-        out_path
+        out_path,
+        # first channel (Hoechst) in P37
+        1
     )
     start_time = int(time.perf_counter())
     # print(command_final)

@@ -1,3 +1,3 @@
 - unmist: https://github.com/Yu-AnChen/unmicst/tree/YC-local
-- S3segmenter: https://github.com/HMS-IDAC/S3segmenter
+- S3segmenter: https://github.com/HMS-IDAC/S3segmenter/tree/1.5.1
 - quantification: https://github.com/Yu-AnChen/quantification/tree/v2
