@@ -8,7 +8,7 @@ python c:/Users/Public/Downloads/S3segmenter/large/S3segmenter.py
     --stackProbPath "{}"
     --outputPath "{}"
     --probMapChan {}
-    --area-max 50000 --expand-size 5 --maxima-footprint-size 7 --mean-intensity-min 128 --pixelSize0.325
+    --area-max 50000 --expand-size 5 --maxima-footprint-size 13 --mean-intensity-min 128 --pixelSize0.325
 '''
 
 import pathlib
