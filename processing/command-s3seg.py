@@ -1,44 +1,93 @@
-from subprocess import call
-import time
+import argparse
 import datetime
+import pathlib
+import subprocess
+import sys
+import time
+
+import run_all_utils
+
 
 command = '''
-python c:/Users/Public/Downloads/S3segmenter/large/S3segmenter.py
+python ../modules/S3segmenter/large/S3segmenter.py
     --imagePath "{}"
     --stackProbPath "{}"
     --outputPath "{}"
-    --probMapChan {}
-    --area-max 50000 --expand-size 5 --maxima-footprint-size 13 --mean-intensity-min 128 --pixelSize0.325
+    --probMapChan {probMapChan}
+    --area-max 50000
+    --expand-size {expand_size}
+    --maxima-footprint-size {maxima_footprint_size}
+    --mean-intensity-min {mean_intensity_min}
+    --pixelSize {pixelSize}
 '''
 
-import pathlib
-import csv
 
-with open(r'C:\Users\Public\Downloads\orion-scripts\file_list.csv') as file_config_csv:
-    csv_reader = csv.DictReader(file_config_csv)
-    file_config = [dict(row) for row in csv_reader]
+MODULE_NAME = 's3seg'
+ORION_DEFAULTS = [
+    ('probMapChan', 1, 'int'),
+    ('expand_size', 5, 'int'),
+    ('maxima_footprint_size', 13, 'int'),
+    ('mean_intensity_min', 128, 'float'),
+    ('pixelSize', 0.325, 'float'),
+]
 
-group_dir = pathlib.Path(r'C:\rcpnl\mcmicro')
-ome_dir = pathlib.Path(r'C:\rcpnl\tissue')
 
-for c in file_config[:]:
-    o = ome_dir / c['path']
-    n = c['name']
+def main(argv=sys.argv):
 
-    print('Processing', n)
-    prob_path = str(group_dir / n / 'unmicst2' / f'{n}_Probabilities_0.tif')
-    out_path = str(group_dir / n / 'segmentation')
-    command_final = command.format(
-        str(o),
-        prob_path,
-        out_path,
-        # first channel (Hoechst) in P37
-        1
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-c',
+        metavar='config-csv',
+        required=True
     )
-    start_time = int(time.perf_counter())
-    # print(command_final)
-    call(' '.join(command_final.split()))
-    end_time = int(time.perf_counter())
+    parser.add_argument(
+        '-m',
+        metavar='module-params',
+        required=False,
+        default=None
+    )
+    parsed_args = parser.parse_args(argv[1:])
+    
+    CURR = pathlib.Path(__file__).resolve().parent
 
-    print('elapsed', datetime.timedelta(seconds=end_time-start_time))
-    print('')
+    file_config, module_params, log_path = run_all_utils.init_run(
+        parsed_args, ORION_DEFAULTS, MODULE_NAME
+    )
+
+    for config in file_config[:]:
+        config = run_all_utils.set_config_defaults(config)
+
+        name = config['name']
+        out_dir = config['out_dir']
+
+        print('Processing', name)
+        nucleus_channel = module_params['probMapChan'] - 1
+        pmap_path = out_dir / name / 'unmicst2' / f'{name}_Probabilities_{nucleus_channel}.tif'
+        command_run = [
+            'python',
+            CURR.parent / 'modules/S3segmenter/large/S3segmenter.py',
+            '--imagePath', config['path'],
+            '--stackProbPath', pmap_path,
+            '--outputPath', out_dir / name / 'segmentation',
+            '--area-max', 50000
+        ]
+        for kk, vv in module_params:
+            command_run.extend([f"--{kk}", vv])
+        
+        start_time = int(time.perf_counter())
+        # print(command_final)
+        subprocess.run(command_run)
+        end_time = int(time.perf_counter())
+
+        print('elapsed', datetime.timedelta(seconds=end_time-start_time))
+        print()
+
+        run_all_utils.to_log(
+            log_path, config['path'], end_time-start_time, module_params
+        )
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
