@@ -73,10 +73,11 @@ def init_run(
         custom_config = configparser.ConfigParser(allow_no_value=True)
         custom_config.read(parsed_args.m)
 
-        custom_params = {
-            k: getattr(custom_config[module_name], f"get{t}")(k, fallback=v)
-            for k, v, t in module_defaults
-        }
+        if module_name in custom_config:
+            custom_params = {
+                k: getattr(custom_config[module_name], f"get{t}")(k, fallback=v)
+                for k, v, t in module_defaults
+            }
         if 'log path' in custom_config:
             log_paths.append(custom_config['log path'].get(module_name))
     module_params.update(custom_params)
