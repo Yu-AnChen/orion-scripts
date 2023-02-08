@@ -1,6 +1,6 @@
 # orion-scripts
 
-## Use the scripts (assuming [setup](#setup-conda-envs-for-processing) is already completed)
+## Use the scripts (assuming [setup](#setup-conda-envs-for-processing-only-needs-to-be-done-once-on-a-computer) is already completed)
 
 1. Install miniconda (only needs to be done once for each user)
 
