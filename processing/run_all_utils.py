@@ -6,7 +6,7 @@ import pathlib
 
 def process_arg_path(path):
     path = pathlib.Path(path)
-    if path.suffix == '.csv':
+    if path.suffix.lower() == '.csv':
         with open(path) as file_config_csv:
             csv_reader = csv.DictReader(file_config_csv)
             return sanitize_config([dict(row) for row in csv_reader])
