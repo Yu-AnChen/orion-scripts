@@ -9,15 +9,16 @@ def main(argv=sys.argv):
     
     CURR = pathlib.Path(__file__).resolve().parent
 
-    config = configparser.ConfigParser()
-    config.read(CURR / 'run_all.ini')
+    config = configparser.ConfigParser(allow_no_value=True)
+    init_config_path = CURR / 'run_all.ini'
+    config.read(init_config_path)
 
     unmicst_env_path = pathlib.Path(config['CONDA ENV PATH']['unmicst'])
     s3seg_env_path = pathlib.Path(config['CONDA ENV PATH']['s3seg'])
     for pp in [unmicst_env_path, s3seg_env_path]:
         assert pp.exists(), (
             f"conda env {pp} does not exist"
-            f" you may need to update {CURR / 'run_all.ini'}"
+            f" you may need to update {init_config_path}"
         )
 
     parser = argparse.ArgumentParser()
@@ -39,13 +40,16 @@ def main(argv=sys.argv):
     s3seg = CURR / 'command-s3seg.py'
     quant = CURR / 'command-quant.py'
 
+    custom_config_path = parsed_args.m
+    if custom_config_path is None:
+        custom_config_path = init_config_path
 
     subprocess.run([
         'conda', 'run', '--no-capture-output',
         '-p', unmicst_env_path,
         'python', unmicst,
         '-c', parsed_args.c,
-        '-m', parsed_args.m
+        '-m', init_config_path
     ])
 
     subprocess.run([
@@ -53,7 +57,7 @@ def main(argv=sys.argv):
         '-p', s3seg_env_path,
         'python', s3seg,
         '-c', parsed_args.c,
-        '-m', parsed_args.m
+        '-m', init_config_path
     ])
 
     return 0

@@ -10,7 +10,7 @@ from module_scripts import unmicst_predict_once as unmicst
 
 MODULE_NAME = 'unmicst'
 ORION_DEFAULTS = [
-    ('nucleus_channel', 1, 'int')
+    ('nucleus_channel', 1, 'int'),
     ('size_scaling_factor', 0.5, 'float'),
     ('intensity_min', 400, 'float'),
     ('intensity_max', 8000, 'float'),

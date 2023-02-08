@@ -23,11 +23,11 @@ import zarr
 
 CURR = pathlib.Path(__file__).resolve().parent
 unmicst_path = CURR.parent.parent / 'modules' / 'UnMicst'
-sys.path.append(unmicst_path)
+sys.path.append(str(unmicst_path))
 
 import UnMicst2 as UnMicst2
 
-import rowit
+from . import rowit
 
 
 def www4(img, border_size=24, out_dtype=None):
