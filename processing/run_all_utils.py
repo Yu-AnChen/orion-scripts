@@ -68,7 +68,7 @@ def init_run(
 
     # use custom params if `-m` is specified
     custom_params = {}
-    log_path = None
+    log_paths = []
     if parsed_args.m is not None:
         custom_config = configparser.ConfigParser(allow_no_value=True)
         custom_config.read(parsed_args.m)
@@ -78,14 +78,14 @@ def init_run(
             for k, v, t in module_defaults
         }
         if 'log path' in custom_config:
-            log_path = custom_config['log path'].get(
-                module_name, fallback=None
-            )
+            log_paths.append(custom_config['log path'].get(module_name))
     module_params.update(custom_params)
     
-    log_path = ini_config['log path'].get(module_name, log_path)
-    if log_path is None:
-        log_path = CURR.parent / f".log/{module_name}.log"
+    log_paths.append(ini_config['log path'].get(module_name))
+    log_paths.append(CURR.parent / f".log/{module_name}.log")
+    log_path = None
+    while log_path is None:
+        log_path = log_paths.pop(0)
     log_path = pathlib.Path(log_path)
     log_path.parent.mkdir(exist_ok=True, parents=True)
 
