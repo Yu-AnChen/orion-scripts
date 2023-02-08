@@ -49,7 +49,7 @@ def main(argv=sys.argv):
         '-p', unmicst_env_path,
         'python', unmicst,
         '-c', parsed_args.c,
-        '-m', init_config_path
+        '-m', custom_config_path
     ])
 
     subprocess.run([
@@ -57,7 +57,7 @@ def main(argv=sys.argv):
         '-p', s3seg_env_path,
         'python', s3seg,
         '-c', parsed_args.c,
-        '-m', init_config_path
+        '-m', custom_config_path
     ])
 
     return 0
