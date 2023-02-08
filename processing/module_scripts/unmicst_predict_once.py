@@ -165,7 +165,7 @@ def process_slide(
     if intensity_max is None:
         quantiles.append(intensity_in_range_p1)
     if len(quantiles) > 0:
-        intensity_ps = np.percentile(da_img, quantiles)
+        intensity_ps = np.percentile(img, quantiles)
     in_range = np.array(
         [*intensity_ps, intensity_min, intensity_max],
         dtype=float
@@ -175,7 +175,7 @@ def process_slide(
         transformed_img
         .map_blocks(
             skimage.exposure.rescale_intensity,
-            in_range=in_range,
+            in_range=tuple(in_range),
             out_range=np.float32,
             dtype=np.float32
         )
