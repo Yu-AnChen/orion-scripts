@@ -111,8 +111,12 @@ def process_slide(
     img_path,
     nucleus_channel,
     size_scaling_factor=1,
-    intensity_min=400,
-    intensity_max=8000,
+    intensity_in_range_p0=0,
+    intensity_in_range_p1=100,
+    intensity_min=None,
+    intensity_max=None,
+    # intensity_min=400,
+    # intensity_max=8000,
     output_path=None,
     intensity_gamma=0.8,
     other_channels=None,
@@ -154,11 +158,24 @@ def process_slide(
         )
     
     # rescale intensity
+    quantiles = []
+    intensity_ps = []
+    if intensity_min is None:
+        quantiles.append(intensity_in_range_p0)
+    if intensity_max is None:
+        quantiles.append(intensity_in_range_p1)
+    if len(quantiles) > 0:
+        intensity_ps = np.percentile(da_img, quantiles)
+    in_range = np.array(
+        [*intensity_ps, intensity_min, intensity_max],
+        dtype=float
+    )
+    in_range = np.sort(in_range)[:2]
     transformed_img = (
         transformed_img
         .map_blocks(
             skimage.exposure.rescale_intensity,
-            in_range=(intensity_min, intensity_max),
+            in_range=in_range,
             out_range=np.float32,
             dtype=np.float32
         )

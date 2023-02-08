@@ -12,8 +12,10 @@ MODULE_NAME = 'unmicst'
 ORION_DEFAULTS = [
     ('nucleus_channel', 1, 'int'),
     ('size_scaling_factor', 0.5, 'float'),
-    ('intensity_min', 400, 'float'),
-    ('intensity_max', 8000, 'float'),
+    ('intensity_in_range_p0', 0, 'float'),
+    ('intensity_in_range_p1', 100, 'float'),
+    ('intensity_min', None, 'float'),
+    ('intensity_max', None, 'float'),
     ('intensity_gamma', 0.8, 'float'),
 ]
 
