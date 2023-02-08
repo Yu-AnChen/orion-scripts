@@ -171,6 +171,7 @@ def process_slide(
         dtype=float
     )
     in_range = np.sort(in_range)[:2]
+    print('\nin_range:', tuple(in_range), '\n')
     transformed_img = (
         transformed_img
         .map_blocks(
