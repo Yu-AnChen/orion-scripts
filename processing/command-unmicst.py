@@ -50,7 +50,8 @@ def main(argv=sys.argv):
         name = config['name']
         out_dir = config['out_dir']
         nucleus_channel = module_params['nucleus_channel']
-        output_path = out_dir / name / 'unmicst2' / f'{name}_Probabilities_{nucleus_channel}.tif'
+        output_path = out_dir / name / 'unmicst2' / f'{name}_Probabilities_{nucleus_channel}.ome.tif'
+        output_path.parent.mkdir(exist_ok=True, parents=True)
         
         
         print('Processing', name)

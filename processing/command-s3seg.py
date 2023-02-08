@@ -25,9 +25,9 @@ python ../modules/S3segmenter/large/S3segmenter.py
 MODULE_NAME = 's3seg'
 ORION_DEFAULTS = [
     ('probMapChan', 1, 'int'),
-    ('expand_size', 5, 'int'),
-    ('maxima_footprint_size', 13, 'int'),
-    ('mean_intensity_min', 128, 'float'),
+    ('expand-size', 5, 'int'),
+    ('maxima-footprint-size', 13, 'int'),
+    ('mean-intensity-min', 128, 'float'),
     ('pixelSize', 0.325, 'float'),
 ]
 
@@ -62,18 +62,19 @@ def main(argv=sys.argv):
 
         print('Processing', name)
         nucleus_channel = module_params['probMapChan'] - 1
-        pmap_path = out_dir / name / 'unmicst2' / f'{name}_Probabilities_{nucleus_channel}.tif'
+        pmap_path = out_dir / name / 'unmicst2' / f'{name}_Probabilities_{nucleus_channel}.ome.tif'
         command_run = [
             'python',
             CURR.parent / 'modules/S3segmenter/large/S3segmenter.py',
             '--imagePath', config['path'],
             '--stackProbPath', pmap_path,
             '--outputPath', out_dir / name / 'segmentation',
-            '--area-max', 50000
+            '--area-max', str(50000)
         ]
-        for kk, vv in module_params:
-            command_run.extend([f"--{kk}", vv])
+        for kk, vv in module_params.items():
+            command_run.extend([f"--{kk}", str(vv)])
         
+        print(command_run)
         start_time = int(time.perf_counter())
         # print(command_final)
         subprocess.run(command_run)
