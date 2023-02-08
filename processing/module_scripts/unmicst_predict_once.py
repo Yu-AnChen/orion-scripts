@@ -8,9 +8,13 @@
 
 
 import datetime
+import os
 import pathlib
 import sys
 import time
+import warnings
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import dask.array as da
 import dask.diagnostics
@@ -95,7 +99,9 @@ def da_to_zarr(da_img, zarr_store=None, num_workers=None, out_shape=None, chunks
 
 
 model_path = pathlib.Path(unmicst_path / 'models' / 'nucleiDAPILAMIN')
-UnMicst2.UNet2D.singleImageInferenceSetup(model_path, 0, -1, -1)
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    UnMicst2.UNet2D.singleImageInferenceSetup(model_path, 0, -1, -1)
 
 
 # 
@@ -208,4 +214,3 @@ def process_slide(
 
     end = int(time.perf_counter())
     print('\nelapsed (total):', datetime.timedelta(seconds=end - start))
-
