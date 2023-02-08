@@ -74,9 +74,7 @@ def main(argv=sys.argv):
         for kk, vv in module_params.items():
             command_run.extend([f"--{kk}", str(vv)])
         
-        print(command_run)
         start_time = int(time.perf_counter())
-        # print(command_final)
         subprocess.run(command_run)
         end_time = int(time.perf_counter())
 
