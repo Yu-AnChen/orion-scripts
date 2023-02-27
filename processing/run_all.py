@@ -13,8 +13,8 @@ def main(argv=sys.argv):
     init_config_path = CURR / 'run_all.ini'
     config.read(init_config_path)
 
-    unmicst_env_path = pathlib.Path(config['CONDA ENV PATH']['unmicst'])
-    s3seg_env_path = pathlib.Path(config['CONDA ENV PATH']['s3seg'])
+    unmicst_env_path = pathlib.Path(config['CONDA ENV PATH']['unmicst']).expanduser()
+    s3seg_env_path = pathlib.Path(config['CONDA ENV PATH']['s3seg']).expanduser()
     for pp in [unmicst_env_path, s3seg_env_path]:
         assert pp.exists(), (
             f"conda env {pp} does not exist"

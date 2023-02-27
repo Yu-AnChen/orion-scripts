@@ -87,7 +87,7 @@ def init_run(
     log_path = None
     while log_path is None:
         log_path = log_paths.pop(0)
-    log_path = pathlib.Path(log_path)
+    log_path = pathlib.Path(log_path).expanduser()
     log_path.parent.mkdir(exist_ok=True, parents=True)
 
     file_config = process_arg_path(parsed_args.c)
