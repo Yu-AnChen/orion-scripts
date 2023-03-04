@@ -28,6 +28,8 @@
       conda activate ~/mcmicro/s3seg
       # Install dependencies from pypi
       python -m pip install palom dask[dataframe] dask-image ome_types
+      # scikit-image 0.20 causes some performance issue
+      python -m pip install -U "scikit-image==0.19.*"
       ```
 
     - Unmicst
@@ -78,6 +80,8 @@
       python -c "import tensorflow; print(tensorflow.config.list_physical_devices('GPU'))"
       # Install other dependencies
       python -m pip install palom dask-image czifile nd2reader
+      # scikit-image 0.20 causes some performance issue
+      python -m pip install -U "scikit-image==0.19.*"
       ```
 
 1. Download orion-scripts from github
