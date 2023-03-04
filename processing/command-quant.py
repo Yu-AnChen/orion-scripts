@@ -6,7 +6,7 @@ import sys
 import time
 
 import run_all_utils
-
+from joblib import Parallel, delayed
 
 command = '''
 python ../modules/quantification/CommandSingleCellExtraction.py
@@ -50,6 +50,7 @@ def main(argv=sys.argv):
     assert marker_csv_path.exists(), f"{marker_csv_path} does not exist"
 
     commands = []
+    quant_out_dirs = []
     for config in file_config[:]:
         config = run_all_utils.set_config_defaults(config)
 
@@ -67,13 +68,15 @@ def main(argv=sys.argv):
         except IndexError as e:
             print(f"\nError: {mask_dir} does not contain file with name pattern {masks}\n")
             raise(e)
-        mask_paths = [f'"{p}"' for p in mask_paths]
+        
+        quant_out_dir = out_dir / name / 'quantification'
+        quant_out_dir.mkdir(exist_ok=True, parents=True)
 
         command_run = [
             'python',
             CURR.parent / 'modules/quantification/CommandSingleCellExtraction.py',
             '--image', config['path'],
-            '--output', out_dir / name / 'quantification',
+            '--output', quant_out_dir,
             '--masks',
         ]
         command_run.extend(mask_paths)
@@ -82,17 +85,25 @@ def main(argv=sys.argv):
                 command_run.extend([f"--{kk}", str(vv)])
 
         commands.append(command_run)
-        # start_time = int(time.perf_counter())
-        # subprocess.run(command_run)
-        # end_time = int(time.perf_counter())
+        quant_out_dirs.append(quant_out_dir)
 
-        # print('elapsed', datetime.timedelta(seconds=end_time-start_time))
-        # print()
+        def run(cmd, out_dir):
+            start_time = int(time.perf_counter())
+            with open(out_dir / 'quant.log', 'a') as f:
+                f.write(start_time)
+                f.write()
+                subprocess.run(cmd, stdout=f)
+            end_time = int(time.perf_counter())
 
-        # run_all_utils.to_log(
-        #     log_path, config['path'], end_time-start_time, module_params
-        # )
+            print('elapsed', datetime.timedelta(seconds=end_time-start_time))
+            print()
 
+            run_all_utils.to_log(
+                log_path, config['path'], end_time-start_time, module_params
+            )
+
+    
+    Parallel(n_jobs=3, backend='loky')(delayed(run)(cmd, dir) for cmd, dir in zip(commands, quant_out_dirs))
     return 0
 
 
