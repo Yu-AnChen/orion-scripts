@@ -6,3 +6,7 @@
 	path = modules/UnMicst
 	url = https://github.com/Yu-AnChen/UnMicst.git
 	branch = master
+[submodule "modules/quantification"]
+	path = modules/quantification
+	url = https://github.com/labsyspharm/quantification.git
+	branch = master
