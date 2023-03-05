@@ -121,6 +121,8 @@ def main(argv=sys.argv):
     n_jobs_max = int(available_ram // max(ram_usages))
     n_cpus = os.cpu_count()
     n_jobs = min(n_jobs_max, n_cpus, len(file_config))
+    if n_jobs == 0:
+        n_jobs = 1
     
     Parallel(n_jobs=n_jobs, backend='loky', verbose=1)(
         delayed(run)(cmd, dir) for cmd, dir in zip(commands, quant_out_dirs)
