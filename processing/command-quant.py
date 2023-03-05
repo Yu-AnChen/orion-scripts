@@ -1,10 +1,12 @@
 import argparse
 import datetime
+import os
 import pathlib
 import subprocess
 import sys
 import time
 
+import psutil
 import run_all_utils
 from joblib import Parallel, delayed
 
@@ -21,6 +23,16 @@ ORION_DEFAULTS = [
     ('masks name pattern', '*cellRing*.ome.tif', ''),
     ('channel_names', None, '')
 ]
+
+
+def estimate_RAM_usage(img_path, num_masks):
+    import tifffile
+    img_path = pathlib.Path(img_path)
+    with tifffile.TiffFile(img_path) as tif:
+        shape = tif.series[0].shape
+    shape = sorted(shape)[-2:]
+    ram_base = (shape[0] * shape[1] / 1024**2) / 1000
+    return (1+2+4*num_masks) * ram_base
 
 
 def main(argv=sys.argv):
@@ -51,13 +63,12 @@ def main(argv=sys.argv):
 
     commands = []
     quant_out_dirs = []
+    ram_usages = []
     for config in file_config[:]:
         config = run_all_utils.set_config_defaults(config)
 
         name = config['name']
         out_dir = config['out_dir']
-
-        print('Processing', name)
 
         masks = module_params['masks name pattern'].split(',')
         img_path = pathlib.Path(config['path'])
@@ -86,24 +97,34 @@ def main(argv=sys.argv):
 
         commands.append(command_run)
         quant_out_dirs.append(quant_out_dir)
+        ram_usages.append(estimate_RAM_usage(config['path'], len(mask_paths)))
 
-        def run(cmd, out_dir):
-            start_time = int(time.perf_counter())
-            with open(out_dir / 'quant.log', 'a') as f:
-                f.write(start_time)
-                f.write()
-                subprocess.run(cmd, stdout=f)
-            end_time = int(time.perf_counter())
+    def run(cmd, out_dir):
+        name = out_dir.parent.name
+        print('Start processing', name)
 
-            print('elapsed', datetime.timedelta(seconds=end_time-start_time))
-            print()
+        start_time = int(time.perf_counter())
+        with open(out_dir / 'quant.log', 'a') as f:
+            f.write(f"{datetime.datetime.now()}\n")
+        with open(out_dir / 'quant.log', 'a') as f:
+            subprocess.run(cmd, stdout=f)
+        end_time = int(time.perf_counter())
 
-            run_all_utils.to_log(
-                log_path, config['path'], end_time-start_time, module_params
-            )
+        print('Finished', name, '- time used', datetime.timedelta(seconds=end_time-start_time))
+        print()
 
+        run_all_utils.to_log(
+            log_path, config['path'], end_time-start_time, module_params
+        )
     
-    Parallel(n_jobs=3, backend='loky')(delayed(run)(cmd, dir) for cmd, dir in zip(commands, quant_out_dirs))
+    available_ram = psutil.virtual_memory().available / 1024**3
+    n_jobs_max = int(available_ram // max(ram_usages))
+    n_cpus = os.cpu_count()
+    n_jobs = min(n_jobs_max, n_cpus, len(file_config))
+    
+    Parallel(n_jobs=n_jobs, backend='loky', verbose=1)(
+        delayed(run)(cmd, dir) for cmd, dir in zip(commands, quant_out_dirs)
+    )
     return 0
 
 
