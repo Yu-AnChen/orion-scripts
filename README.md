@@ -84,6 +84,17 @@
       python -m pip install -U "scikit-image==0.19.*"
       ```
 
+    - Quantification
+
+      ```bash
+      # Create env
+      conda create -p ~/mcmicro/quantification -c conda-forge python=3.10
+      # Activate env
+      conda activate ~/mcmicro/quantification
+      # Install dependencies from pypi
+      python -m pip install h5py pandas numpy pathlib "scikit-image==0.19.*" imagecodecs joblib psutil
+      ```
+
 1. Download orion-scripts from github
 
     The following downloads the scripts to user's home directory (`~` /
