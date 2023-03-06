@@ -70,7 +70,7 @@ def www4(img, border_size=24, out_dtype=None):
     output = skimage.util.montage(
         output,
         grid_shape=wv_cfg.window_view_shape[:2],
-        multichannel=True
+        channel_axis=3
     )[:Y, :X]
     if out_dtype is not None:
         output = skimage.exposure.rescale_intensity(
