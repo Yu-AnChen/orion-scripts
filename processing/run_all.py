@@ -5,26 +5,17 @@ import argparse
 import configparser
 
 
+FLOW = ('unmicst', 's3seg', 'quantification')
+
+
 def main(argv=sys.argv):
     
     CURR = pathlib.Path(__file__).resolve().parent
 
-    config = configparser.ConfigParser(allow_no_value=True)
-    init_config_path = CURR / 'run_all.ini'
-    config.read(init_config_path)
-
-    unmicst_env_path = pathlib.Path(config['CONDA ENV PATH']['unmicst']).expanduser()
-    s3seg_env_path = pathlib.Path(config['CONDA ENV PATH']['s3seg']).expanduser()
-    for pp in [unmicst_env_path, s3seg_env_path]:
-        assert pp.exists(), (
-            f"conda env {pp} does not exist"
-            f" you may need to update {init_config_path}"
-        )
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-c',
-        metavar='config-csv',
+        metavar='init_config-csv',
         required=True
     )
     parser.add_argument(
@@ -35,30 +26,62 @@ def main(argv=sys.argv):
     )
     parsed_args = parser.parse_args(argv[1:])
 
-
-    unmicst = CURR / 'command-unmicst.py'
-    s3seg = CURR / 'command-s3seg.py'
-    quant = CURR / 'command-quant.py'
+    init_config = configparser.ConfigParser(allow_no_value=True)
+    init_config_path = CURR / 'run_all.ini'
+    init_config.read(init_config_path)
 
     custom_config_path = parsed_args.m
     if custom_config_path is None:
         custom_config_path = init_config_path
 
-    subprocess.run([
-        'conda', 'run', '--no-capture-output',
-        '-p', unmicst_env_path,
-        'python', unmicst,
-        '-c', parsed_args.c,
-        '-m', custom_config_path
-    ])
+    start = init_config['Processes']['start-at']
+    stop = init_config['Processes']['stop-at']
 
-    subprocess.run([
-        'conda', 'run', '--no-capture-output',
-        '-p', s3seg_env_path,
-        'python', s3seg,
-        '-c', parsed_args.c,
-        '-m', custom_config_path
-    ])
+    custom_config = configparser.ConfigParser(allow_no_value=True)
+    
+    start = custom_config.get('Processes', 'start-at', fallback=start)
+    stop = custom_config.get('Processes', 'stop-at', fallback=stop)
+    
+    try:
+        idx_start = FLOW.index(start)
+        idx_stop = FLOW.index(stop)
+    except ValueError as e:
+        print(e)
+        print()
+        print(f"start-at and stop-at only accept one of {FLOW}")
+        raise(ValueError)
+
+    if idx_start > idx_stop:
+        print(f"Specified start-at is {start}, stop-at can only be one of {FLOW[idx_start]}")
+        raise(ValueError)
+
+    STEPS = FLOW[idx_start:idx_stop]
+
+    env_paths = [
+        pathlib.Path(init_config['CONDA ENV PATH'][step]).expanduser()
+        for step in STEPS
+    ]
+
+    for step, env_path in zip(STEPS, env_paths):
+        assert env_path.exists(), (
+            f"conda env ({env_path}) for {step} step does not exist"
+            f" you may need to update {init_config_path}"
+            f" or setup the required conda env"
+        )
+    
+    script_paths = [
+        CURR / f"command-{step}.py"
+        for step in STEPS
+    ]
+
+    for step, env_path, script_path in zip(STEPS, env_paths, script_paths):
+        subprocess.run([
+            'conda', 'run', '--no-capture-output',
+            '-p', env_path,
+            'python', script_path,
+            '-c', parsed_args.c,
+            '-m', custom_config_path
+        ])
 
     return 0
 
