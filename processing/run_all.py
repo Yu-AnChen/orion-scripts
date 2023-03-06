@@ -47,15 +47,14 @@ def main(argv=sys.argv):
         idx_stop = FLOW.index(stop)
     except ValueError as e:
         print(e)
-        print()
-        print(f"start-at and stop-at only accept one of {FLOW}")
-        raise(ValueError)
+        msg = f"start-at and stop-at only accept one of {FLOW}"
+        raise(ValueError(f"\n\n{msg}\n\n"))
 
     if idx_start > idx_stop:
-        print(f"Specified start-at is {start}, stop-at can only be one of {FLOW[idx_start]}")
-        raise(ValueError)
+        msg = f"Specified start-at is {start}, stop-at can only be one of {FLOW[idx_start:]}"
+        raise(ValueError(f"\n\n{msg}\n\n"))
 
-    STEPS = FLOW[idx_start:idx_stop]
+    STEPS = FLOW[idx_start:idx_stop+1]
 
     env_paths = [
         pathlib.Path(init_config['CONDA ENV PATH'][step]).expanduser()
