@@ -38,6 +38,7 @@ def main(argv=sys.argv):
     stop = init_config['Processes']['stop-at']
 
     custom_config = configparser.ConfigParser(allow_no_value=True)
+    custom_config.read(custom_config_path)
     
     start = custom_config.get('Processes', 'start-at', fallback=start)
     stop = custom_config.get('Processes', 'stop-at', fallback=stop)
