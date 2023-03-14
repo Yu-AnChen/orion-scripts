@@ -204,7 +204,7 @@ def process_slide(
 
     zarr_prob_maps = da_to_zarr(
         prob_maps,
-        num_workers=3
+        num_workers=1
     )
 
     # final resizing
