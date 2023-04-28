@@ -64,6 +64,7 @@ def main(argv=sys.argv):
     commands = []
     quant_out_dirs = []
     ram_usages = []
+    image_paths = []
     for config in file_config[:]:
         config = run_all_utils.set_config_defaults(config)
 
@@ -98,8 +99,9 @@ def main(argv=sys.argv):
         commands.append(command_run)
         quant_out_dirs.append(quant_out_dir)
         ram_usages.append(estimate_RAM_usage(config['path'], len(mask_paths)))
+        image_paths.append(img_path)
 
-    def run(cmd, out_dir):
+    def run(cmd, out_dir, image_path):
         name = out_dir.parent.name
         print('Start processing', name)
 
@@ -114,7 +116,7 @@ def main(argv=sys.argv):
         print()
 
         run_all_utils.to_log(
-            log_path, config['path'], end_time-start_time, module_params
+            log_path, image_path, end_time-start_time, module_params
         )
     
     available_ram = psutil.virtual_memory().available / 1024**3
@@ -125,7 +127,7 @@ def main(argv=sys.argv):
         n_jobs = 1
     
     Parallel(n_jobs=n_jobs, backend='loky', verbose=1)(
-        delayed(run)(cmd, dir) for cmd, dir in zip(commands, quant_out_dirs)
+        delayed(run)(cmd, dir, ip) for cmd, dir, ip in zip(commands, quant_out_dirs, image_paths)
     )
     return 0
 
