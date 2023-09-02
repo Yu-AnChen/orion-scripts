@@ -224,10 +224,11 @@ def process_slide(
 
     import palom
 
+    pixel_size = palom.reader.OmePyramidReader(img_path).pixel_size
     palom.pyramid.write_pyramid(
         [da.from_zarr(zarr_matched_prob_maps)[[2, 1, 0], ...]],
         output_path,
-        pixel_size=0.325,
+        pixel_size=pixel_size,
         downscale_factor=2,
         tile_size=1024,
         compression='zlib',
