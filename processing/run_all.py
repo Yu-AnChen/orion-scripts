@@ -77,8 +77,8 @@ def main(argv=sys.argv):
     for step, env_path, script_path in zip(STEPS, env_paths, script_paths):
         subprocess.run([
             'conda', 'run', '--no-capture-output',
-            '-p', env_path,
-            'python', script_path,
+            '-p', str(env_path),
+            'python', str(script_path),
             '-c', parsed_args.c,
             '-m', custom_config_path
         ])
