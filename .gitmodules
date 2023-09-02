@@ -1,6 +1,6 @@
 [submodule "modules/S3segmenter"]
 	path = modules/S3segmenter
-	url = https://github.com/HMS-IDAC/S3segmenter.git
+	url = https://github.com/Yu-AnChen/S3segmenter.git
 	branch = master
 [submodule "modules/UnMicst"]
 	path = modules/UnMicst

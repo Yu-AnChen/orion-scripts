@@ -228,6 +228,11 @@ def process_slide(
         [da.from_zarr(zarr_matched_prob_maps)[[2, 1, 0], ...]],
         output_path,
         pixel_size=0.325,
+        downscale_factor=2,
+        tile_size=1024,
+        compression='zlib',
+        save_RAM=True,
+        kwargs_tifffile=dict(software='unmicst v2.7.1')
     )
 
     end = int(time.perf_counter())
