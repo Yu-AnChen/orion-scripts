@@ -21,6 +21,10 @@
 
     - S3seg
 
+      > **NOTE**  
+      > Launch the  **Anaconda Prompt (Miniconda3)** application and run the
+      > following line-by-line
+
       ```bash
       # Create env
       conda create -p ~/mcmicro/s3seg -c conda-forge python=3.10
@@ -32,7 +36,14 @@
       python -m pip install -U "scikit-image==0.19.*"
       ```
 
+      > **NOTE**  
+      > Close the Anaconda Prompt window
+
     - Unmicst
+
+      > **NOTE**  
+      > Launch the  *Anaconda Prompt (Miniconda3)* application and run the
+      > following line-by-line
 
       ```bash
       # Create and activate env
@@ -44,6 +55,10 @@
       `tensorflow`](https://www.tensorflow.org/install/pip) to install
       tensorflow.
 
+      > [!IMPORTANT]
+      > You must follow one of the following instructions based on your
+      > operating system (Windows or Linux)
+
       *For Windows Native*
 
       ```bash
@@ -52,7 +67,7 @@
       python -m pip install "tensorflow<2.11"
       ```
       <details>
-      <summary><em>For Linux</em></summary>
+      <summary><em>For Linux (click to expand)</em></summary>
 
       ```bash
       # Install tensorflow GPU
@@ -71,9 +86,10 @@
       echo 'export LD_LIBRARY_PATH="${LD_LIBRARY_PATH_BACKUP:-}"' >> ~/mcmicro/unmicst/etc/conda/deactivate.d/env_vars.sh
       echo 'unset LD_LIBRARY_PATH_BACKUP' >> ~/mcmicro/unmicst/etc/conda/deactivate.d/env_vars.sh
       ```
-      </details>
+      </details><br />
 
-      *For Windows and Linux*, test installation and continue to install other dependencies.
+      > **IMPORTANT**  
+      > Continue with the following for **both Windows and Linux machines**
 
       ```bash
       # Test if tensorflow uses GPU
@@ -84,7 +100,14 @@
       python -m pip install -U "scikit-image==0.19.*"
       ```
 
+      > **NOTE**  
+      > Close the Anaconda Prompt window
+
     - Quantification
+
+      > **NOTE**  
+      > Launch the  *Anaconda Prompt (Miniconda3)* application and run the
+      > following line-by-line
 
       ```bash
       # Create env
@@ -94,6 +117,9 @@
       # Install dependencies from pypi
       python -m pip install h5py pandas numpy pathlib "scikit-image==0.19.*" imagecodecs joblib psutil
       ```
+
+      > **NOTE**  
+      > Close the Anaconda Prompt window
 
 1. Download orion-scripts from github
 
@@ -146,14 +172,14 @@
 
     ```csv
     name,path,out_dir
-    Sample-A-slide-1,Z:/project-X/raw/slide-1-20221105.ome.tiff,Z:/project-X/processed
-    Sample-B-slide-2,Z:/project-X/raw/slide-2-20221216.ome.tiff,Z:/project-X/processed
+    Sample-A-slide-1,Z:\project-X\raw\slide-1-20221105.ome.tiff,Z:\project-X\processed
+    Sample-B-slide-2,Z:\project-X\raw\slide-2-20221216.ome.tiff,Z:\project-X\processed
     ```
 
     *On Windows*, in **Anaconda Prompt (Miniconda3)**, type the following and hit enter
 
-    ```bash
-    python "%HOMEDRIVE%%HOMEPATH%/orion-scripts/processing/run_all.py" -c Z:/project-X/files.csv
+    ```cmd
+    python "%HOMEDRIVE%%HOMEPATH%/orion-scripts/processing/run_all.py" -c Z:\project-X\files.csv
     ```
 
     *On Linux/Unix*, to run it in the background, assuming current directory is
@@ -165,8 +191,8 @@
 
     will process the two images and generate the following outputs
 
-    ```bash
-    Z:/project-X
+    ```cmd
+    Z:\project-X
     │   files.csv
     │
     ├───processed
@@ -204,14 +230,14 @@
 1. [Optional] Change module parameters
     - If tuning module parameter is needed, make a copy of
       `~/orion-scripts/processing/run_all.ini` to the project directory. E.g.
-      `Z:/project-X/custom.ini`
+      `Z:\project-X\custom.ini`
     - Change the `[s3seg]` and `[unmicst]` section as needed
     - Pass the `custom.ini` to the processing call.
 
     *On Windows*, in **Anaconda Prompt (Miniconda3)**, type the following and hit enter
 
-    ```bash
-    python "%HOMEDRIVE%%HOMEPATH%/orion-scripts/processing/run_all.py" -c Z:/project-X/files.csv -m Z:/project-X/custom.ini
+    ```cmd
+    python "%HOMEDRIVE%%HOMEPATH%/orion-scripts/processing/run_all.py" -c Z:\project-X\files.csv -m Z:\project-X\custom.ini
     ```
 
     *On Linux/Unix*, to run it in the background, assuming current directory is
