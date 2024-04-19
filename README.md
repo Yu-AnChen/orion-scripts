@@ -55,7 +55,7 @@
       `tensorflow`](https://www.tensorflow.org/install/pip) to install
       tensorflow.
 
-      > [!IMPORTANT]
+      > **IMPORTANT**  
       > You must follow one of the following instructions based on your
       > operating system (Windows or Linux)
 
