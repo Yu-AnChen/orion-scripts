@@ -6,6 +6,7 @@ import sys
 import time
 
 import run_all_utils
+from module_scripts import erode_mask
 
 
 command = '''
@@ -29,6 +30,7 @@ ORION_DEFAULTS = [
     ('maxima-footprint-size', 13, 'int'),
     ('mean-intensity-min', 128, 'float'),
     ('pixelSize', 0.325, 'float'),
+    ('erode-size', 0, 'int'),
 ]
 
 
@@ -72,10 +74,20 @@ def main(argv=sys.argv):
             '--area-max', str(50000)
         ]
         for kk, vv in module_params.items():
-            command_run.extend([f"--{kk}", str(vv)])
+            if kk != "erode-size":
+                command_run.extend([f"--{kk}", str(vv)])
         
         start_time = int(time.perf_counter())
         subprocess.run(command_run)
+        if module_params['erode-size'] > 0:
+            img_name = pathlib.Path(config['path']).name.split('.')[0]
+            segmentation_dir = out_dir / name / 'segmentation' / img_name
+            erode_mask.process_slide(
+                nucleus_mask_path=segmentation_dir / 'nucleiRing.ome.tif',
+                cell_mask_path=segmentation_dir / 'cellRing.ome.tif',
+                erode_size=module_params['erode-size'],
+                output_path=segmentation_dir / 'cytoRing-eroded.ome.tif',
+            )
         end_time = int(time.perf_counter())
 
         print('elapsed', datetime.timedelta(seconds=end_time-start_time))
