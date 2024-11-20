@@ -199,12 +199,12 @@
     │   ├───Sample-A-slide-1
     │   │   ├───segmentation
     │   │   │   └───slide-1-20221105
-    │   │   │       │   cellRing.ome.tif
-    │   │   │       │   cytoRing.ome.tif
-    │   │   │       │   nucleiRing.ome.tif
+    │   │   │       │   Sample-A-slide-1-cellRing.ome.tif
+    │   │   │       │   Sample-A-slide-1-cytoRing.ome.tif
+    │   │   │       │   Sample-A-slide-1-nucleiRing.ome.tif
     │   │   │       │
     │   │   │       └───qc
-    │   │   │               nucleiRingOutlines.ome.tif
+    │   │   │               slide-1-20221105-nucleiRingOutlines.ome.tif
     │   │   │
     │   │   └───unmicst2
     │   │           Sample-A-slide-1_Probabilities_0.ome.tif
@@ -212,12 +212,12 @@
     │   └───Sample-B-slide-2
     │       ├───segmentation
     │       │   └───slide-2-20221216
-    │       │       │   cellRing.ome.tif
-    │       │       │   cytoRing.ome.tif
-    │       │       │   nucleiRing.ome.tif
+    │       │       │   Sample-B-slide-2-cellRing.ome.tif
+    │       │       │   Sample-B-slide-2-cytoRing.ome.tif
+    │       │       │   Sample-B-slide-2-nucleiRing.ome.tif
     │       │       │
     │       │       └───qc
-    │       │               nucleiRingOutlines.ome.tif
+    │       │               slide-2-20221216-nucleiRingOutlines.ome.tif
     │       │
     │       └───unmicst2
     │               Sample-B-slide-2_Probabilities_0.ome.tif
