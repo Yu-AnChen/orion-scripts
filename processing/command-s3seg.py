@@ -31,6 +31,7 @@ ORION_DEFAULTS = [
     ('mean-intensity-min', 128, 'float'),
     ('pixelSize', 0.325, 'float'),
     ('erode-size', 0, 'int'),
+    ('use-name-in-csv', True, 'boolean'),
 ]
 
 
@@ -74,20 +75,43 @@ def main(argv=sys.argv):
             '--area-max', str(50000)
         ]
         for kk, vv in module_params.items():
-            if kk != "erode-size":
+            if kk not in ["erode-size", "use-name-in-csv"]:
                 command_run.extend([f"--{kk}", str(vv)])
         
         start_time = int(time.perf_counter())
-        subprocess.run(command_run)
-        if module_params['erode-size'] > 0:
-            img_name = pathlib.Path(config['path']).name.split('.')[0]
-            segmentation_dir = out_dir / name / 'segmentation' / img_name
+        
+        result = subprocess.run(command_run)
+        if result.returncode != 0:
+            return result.returncode
+
+        img_name = pathlib.Path(config['path']).name.split('.')[0]
+        segmentation_dir = out_dir / name / 'segmentation' / img_name
+        
+        if module_params['erode-size'] > 0:    
             erode_mask.process_slide(
                 nucleus_mask_path=segmentation_dir / 'nucleiRing.ome.tif',
                 cell_mask_path=segmentation_dir / 'cellRing.ome.tif',
                 erode_size=module_params['erode-size'],
                 output_path=segmentation_dir / 'cytoRing-eroded.ome.tif',
             )
+        
+        if module_params["use-name-in-csv"]:
+            ori_names = [
+                "nucleiRing.ome.tif",
+                "cellRing.ome.tif",
+                "cytoRing.ome.tif",
+                "cytoRing-eroded.ome.tif"
+            ]
+            new_names = [f"{name}-{nn}" for nn in ori_names]
+            for oo, nn in zip(ori_names, new_names):
+                ori_path = segmentation_dir / oo
+                new_path = segmentation_dir / nn
+                if new_path.exists():
+                    print("Deleating existing", new_path)
+                    new_path.unlink()
+                if ori_path.exists():
+                    ori_path.replace(new_path)
+    
         end_time = int(time.perf_counter())
 
         print('elapsed', datetime.timedelta(seconds=end_time-start_time))
