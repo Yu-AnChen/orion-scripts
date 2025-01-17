@@ -110,12 +110,8 @@
       > following line-by-line
 
       ```bash
-      # Create env
-      conda create -p ~/mcmicro/quantification -c conda-forge python=3.10
-      # Activate env
-      conda activate ~/mcmicro/quantification
-      # Install dependencies from pypi
-      python -m pip install h5py pandas numpy pathlib "scikit-image==0.19.*" imagecodecs joblib psutil
+      # Create env and install dependencies
+      conda create -p ~/mcmicro/quantification -c conda-forge python=3.10 pip h5py numpy "scikit-image<0.20" pandas imagecodecs joblib psutil
       ```
 
       > **NOTE**  
