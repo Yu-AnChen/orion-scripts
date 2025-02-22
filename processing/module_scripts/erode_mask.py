@@ -29,3 +29,57 @@ def process_slide(
         is_mask=True,
         save_RAM=True,
     )
+
+
+import argparse
+import pathlib
+import sys
+
+
+def get_parser():
+    """Creates and returns an argument parser for the erode_mask.py script."""
+    parser = argparse.ArgumentParser(
+        description="Erodes a nucleus mask and processes it against a cell mask."
+    )
+
+    parser.add_argument(
+        "nucleus_mask_path",
+        type=pathlib.Path,
+        help="Path to the input nucleus mask (OME-TIFF file).",
+    )
+
+    parser.add_argument(
+        "cell_mask_path",
+        type=pathlib.Path,
+        help="Path to the input cell mask (OME-TIFF file).",
+    )
+
+    parser.add_argument(
+        "erode_size",
+        type=int,
+        help="Size of the erosion element in pixels.",
+    )
+
+    parser.add_argument(
+        "output_path",
+        type=pathlib.Path,
+        help="Path to save the processed mask (OME-TIFF file).",
+    )
+
+    return parser
+
+
+def main(argv=sys.argv):
+    parser = get_parser()
+    args = parser.parse_args(argv[1:])
+
+    process_slide(
+        nucleus_mask_path=args.nucleus_mask_path,
+        cell_mask_path=args.cell_mask_path,
+        erode_size=args.erode_size,
+        output_path=args.output_path,
+    )
+
+
+if __name__ == "__main__":
+    sys.exit(main())
