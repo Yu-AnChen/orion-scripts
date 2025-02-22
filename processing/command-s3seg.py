@@ -6,7 +6,6 @@ import sys
 import time
 
 import run_all_utils
-from module_scripts import erode_mask
 
 
 command = '''
@@ -87,12 +86,16 @@ def main(argv=sys.argv):
         img_name = pathlib.Path(config['path']).name.split('.')[0]
         segmentation_dir = out_dir / name / 'segmentation' / img_name
         
-        if module_params['erode-size'] > 0:    
-            erode_mask.process_slide(
-                nucleus_mask_path=segmentation_dir / 'nucleiRing.ome.tif',
-                cell_mask_path=segmentation_dir / 'cellRing.ome.tif',
-                erode_size=module_params['erode-size'],
-                output_path=segmentation_dir / 'cytoRing-eroded.ome.tif',
+        if module_params["erode-size"] > 0:
+            subprocess.run(
+                [
+                    "python",
+                    CURR / "module_scripts/erode_mask.py",
+                    segmentation_dir / "nucleiRing.ome.tif",
+                    segmentation_dir / "cellRing.ome.tif",
+                    str(module_params["erode-size"]),
+                    segmentation_dir / "cytoRing-eroded.ome.tif",
+                ]
             )
         
         if module_params["use-name-in-csv"]:
